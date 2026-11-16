@@ -40,7 +40,7 @@ Route::get('/checkout/sucesso/{order:number}', [CheckoutController::class, 'succ
 */
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.store');
-Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
