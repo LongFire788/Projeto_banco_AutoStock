@@ -1,30 +1,28 @@
-FROM dunglas/frankenphp:1-php8.3-bookworm AS base
+FROM dunglas/frankenphp:1-php8.3-bookworm
+
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && install-php-extensions pdo_pgsql intl zip
+
 WORKDIR /app
 
-FROM base AS dependencies
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY composer.json composer.lock ./
-RUN composer install \
-    --no-dev \
-    --no-interaction \
-    --no-progress \
-    --no-scripts \
-    --optimize-autoloader \
-    --prefer-dist
-
 COPY . .
-RUN mkdir -p \
+
+RUN rm -f bootstrap/cache/*.php \
+    && mkdir -p \
         storage/framework/cache \
         storage/framework/sessions \
         storage/framework/views \
         bootstrap/cache \
-    && composer dump-autoload --no-dev --classmap-authoritative
+    && composer install \
+        --no-dev \
+        --no-interaction \
+        --no-progress \
+        --prefer-dist \
+        --optimize-autoloader
 
-FROM base AS runtime
-COPY --from=dependencies --chown=www-data:www-data /app /app
 COPY --chown=www-data:www-data Caddyfile /etc/frankenphp/Caddyfile
+RUN chown -R www-data:www-data /app
 
 ENV PORT=80 \
     APP_ENV=production \
