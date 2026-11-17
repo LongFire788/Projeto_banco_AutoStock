@@ -11,6 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Atrás do proxy do Vercel, confiar nos headers X-Forwarded-* garante
+        // que o Laravel gere URLs HTTPS (evita redirects e cookies inseguros).
+        $middleware->trustProxies(at: '*');
+
         // Evita "Página expirada" (419) ao sair com sessão/token desatualizado.
         $middleware->validateCsrfTokens(except: [
             'logout',
