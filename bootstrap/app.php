@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsCliente;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,6 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Perfis de acesso: area administrativa e area do cliente.
+        $middleware->alias([
+            'admin' => EnsureUserIsAdmin::class,
+            'cliente' => EnsureUserIsCliente::class,
+        ]);
+
         // Atrás do proxy do Vercel, confiar nos headers X-Forwarded-* garante
         // que o Laravel gere URLs HTTPS (evita redirects e cookies inseguros).
         $middleware->trustProxies(at: '*');

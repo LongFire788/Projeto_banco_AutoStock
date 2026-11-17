@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\SellerController;
 use App\Http\Controllers\Admin\VehicleModelController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\HomeController;
@@ -44,10 +45,19 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
+| Área do cliente
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'cliente'])->prefix('minha-conta')->name('cliente.')->group(function () {
+    Route::get('/', ClientDashboardController::class)->name('dashboard');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Painel administrativo
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
 
     Route::resource('sellers', SellerController::class);

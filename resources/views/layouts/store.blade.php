@@ -24,7 +24,15 @@
             <nav class="flex items-center gap-5 text-sm">
                 <a href="{{ route('home') }}" class="text-slate-300 hover:text-white">Catálogo</a>
                 @auth
-                    <a href="{{ route('admin.dashboard') }}" class="text-slate-300 hover:text-white">Painel</a>
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="text-slate-300 hover:text-white">Painel admin</a>
+                    @else
+                        <a href="{{ route('cliente.dashboard') }}" class="text-slate-300 hover:text-white">Minha conta</a>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-slate-300 hover:text-white">Sair</button>
+                    </form>
                 @else
                     <a href="{{ route('login') }}" class="text-slate-300 hover:text-white">Entrar</a>
                 @endauth
