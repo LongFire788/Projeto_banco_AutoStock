@@ -34,6 +34,7 @@ class OrderController extends Controller
         return view('admin.orders.index', [
             'orders' => $orders,
             'statuses' => Order::statuses(),
+            'statusLabels' => Order::statusLabels(),
         ]);
     }
 
@@ -59,7 +60,9 @@ class OrderController extends Controller
         return view('admin.orders.show', [
             'order' => $order,
             'statuses' => Order::statuses(),
+            'statusLabels' => Order::statusLabels(),
             'shipmentStatuses' => OrderShipment::statuses(),
+            'shipmentStatusLabels' => OrderShipment::statusLabels(),
             'pixQrSvg' => $pixQrSvg,
         ]);
     }

@@ -9,7 +9,7 @@
             <h1 class="mt-4 text-2xl font-bold text-slate-900">Pedido realizado com sucesso!</h1>
             <p class="mt-1 text-sm text-slate-500">Guardamos seu pedido com o número <span class="font-mono font-semibold text-slate-800">{{ $order->number }}</span>.</p>
             <p class="mt-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                Pagamento {{ strtolower($order->payment_status_label) }} · {{ $order->payment_method ? ucfirst(str_replace('_', ' ', $order->payment_method)) : '—' }}
+                Pagamento {{ strtolower($order->payment_status_label) }} · {{ $order->payment_method ? $order->payment_method_label : '—' }}
             </p>
         </div>
 

@@ -16,7 +16,7 @@
                 <select name="status" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
                     <option value="">Todos</option>
                     @foreach ($statuses as $status)
-                        <option value="{{ $status }}" @selected(request('status') === $status)>{{ ucfirst($status) }}</option>
+                        <option value="{{ $status }}" @selected(request('status') === $status)>{{ $statusLabels[$status] ?? ucfirst($status) }}</option>
                     @endforeach
                 </select>
             </div>

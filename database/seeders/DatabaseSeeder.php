@@ -17,7 +17,11 @@ class DatabaseSeeder extends Seeder
     {
         User::updateOrCreate(
             ['email' => 'admin@autostock.test'],
-            ['name' => 'Administrador AutoStock', 'password' => Hash::make('password')]
+            [
+                'name' => 'Administrador AutoStock',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_ADMIN,
+            ]
         );
 
         $sellers = collect([

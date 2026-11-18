@@ -46,7 +46,7 @@ class StorefrontCheckoutTest extends TestCase
         $response = $this->post(route('checkout.store'), [
             'customer_name' => 'João Souza',
             'customer_email' => 'joao@example.test',
-            'customer_document' => '12345678901',
+            'customer_document' => '12345678909',
             'customer_phone' => '(21) 99999-0000',
             'shipping_zip_code' => '20040020',
             'shipping_street' => 'Rua A',

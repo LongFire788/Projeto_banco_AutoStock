@@ -22,7 +22,7 @@ class CheckoutStockTest extends TestCase
         return [
             'customer_name' => 'Maria Silva',
             'customer_email' => 'maria@example.test',
-            'customer_document' => '12345678901',
+            'customer_document' => '12345678909',
             'customer_phone' => '(11) 99999-0000',
             'shipping_zip_code' => '20040020',
             'shipping_street' => 'Rua da Entrega',
@@ -109,7 +109,7 @@ class CheckoutStockTest extends TestCase
 
     public function test_cancelling_an_order_restores_stock(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $seller = Seller::factory()->create();
         $variant = ProductVariant::factory()->for(Product::factory()->for($seller))->create([
             'stock' => 5,

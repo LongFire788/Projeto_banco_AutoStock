@@ -89,7 +89,7 @@
                             <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">Status do envio</label>
                             <select name="status" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                                 @foreach ($shipmentStatuses as $status)
-                                    <option value="{{ $status }}" @selected($shipment->status === $status)>{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
+                                    <option value="{{ $status }}" @selected($shipment->status === $status)>{{ $shipmentStatusLabels[$status] ?? ucfirst(str_replace('_', ' ', $status)) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -120,7 +120,7 @@
                     <div class="flex justify-between"><dt class="text-slate-500">Desconto</dt><dd>− R$ {{ number_format((float) $order->discount_total, 2, ',', '.') }}</dd></div>
                     <div class="flex justify-between border-t border-slate-100 pt-2 text-base font-bold"><dt>Total</dt><dd>R$ {{ number_format((float) $order->total, 2, ',', '.') }}</dd></div>
                 </dl>
-                <p class="mt-3 text-xs text-slate-400">Pagamento: {{ $order->payment_method ? ucfirst(str_replace('_', ' ', $order->payment_method)) : '—' }}</p>
+                <p class="mt-3 text-xs text-slate-400">Pagamento: {{ $order->payment_method ? $order->payment_method_label : '—' }}</p>
             </section>
 
             @if ($order->payment_method === 'pix')
@@ -166,10 +166,10 @@
                     @method('PATCH')
                     <select name="status" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                         @foreach ($statuses as $status)
-                            <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
+                            <option value="{{ $status }}" @selected($order->status === $status)>{{ $statusLabels[$status] ?? ucfirst(str_replace('_', ' ', $status)) }}</option>
                         @endforeach
                     </select>
-                    <p class="text-xs text-slate-400">Ao definir como <strong>paid</strong>, os pagamentos pendentes são aprovados. Ao cancelar, o estoque é devolvido.</p>
+                    <p class="text-xs text-slate-400">Ao definir como <strong>Pago</strong>, os pagamentos pendentes são aprovados. Ao cancelar, o estoque é devolvido.</p>
                     <button class="w-full rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400">Salvar status</button>
                 </form>
             </section>

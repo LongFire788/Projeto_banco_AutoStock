@@ -6,8 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'AutoStock') · AutoStock</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="flex min-h-screen flex-col bg-slate-100 text-slate-800">

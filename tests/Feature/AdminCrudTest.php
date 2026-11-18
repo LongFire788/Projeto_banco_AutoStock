@@ -21,7 +21,7 @@ class AdminCrudTest extends TestCase
 
     public function test_admin_can_manage_sellers_products_variants_and_vehicles(): void
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
 
         $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk();
 

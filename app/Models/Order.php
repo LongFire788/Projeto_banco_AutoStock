@@ -91,15 +91,40 @@ class Order extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match ($this->status) {
+        return self::statusLabels()[$this->status] ?? ucfirst((string) $this->status);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function statusLabels(): array
+    {
+        return [
             self::STATUS_PENDING => 'Aguardando pagamento',
             self::STATUS_PAID => 'Pago',
             self::STATUS_PROCESSING => 'Em separação',
             self::STATUS_SHIPPED => 'Enviado',
             self::STATUS_DELIVERED => 'Entregue',
             self::STATUS_CANCELLED => 'Cancelado',
-            default => ucfirst($this->status),
-        };
+        ];
+    }
+
+    public function getPaymentMethodLabelAttribute(): string
+    {
+        return self::paymentMethodLabels()[$this->payment_method]
+            ?? ucfirst(str_replace('_', ' ', (string) $this->payment_method));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function paymentMethodLabels(): array
+    {
+        return [
+            'pix' => 'Pix',
+            'credit_card' => 'Cartão de crédito',
+            'boleto' => 'Boleto',
+        ];
     }
 
     public function getPaymentStatusLabelAttribute(): string

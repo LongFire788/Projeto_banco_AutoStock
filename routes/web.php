@@ -8,8 +8,10 @@ use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\SellerController;
 use App\Http\Controllers\Admin\VehicleModelController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\Storefront\CartController;
+use App\Http\Controllers\Storefront\CepController;
 use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/produtos/{product}', [HomeController::class, 'show'])->name('products.show');
+Route::get('/cep/{cep}', CepController::class)->name('cep.lookup');
 
 Route::prefix('carrinho')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
@@ -41,6 +44,7 @@ Route::get('/checkout/sucesso/{order:number}', [CheckoutController::class, 'succ
 */
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.store');
+Route::post('/cadastrar', [RegisterController::class, 'register'])->name('register.store');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*

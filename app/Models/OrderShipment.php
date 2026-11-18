@@ -55,14 +55,21 @@ class OrderShipment extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match ($this->status) {
+        return self::statusLabels()[$this->status] ?? ucfirst((string) $this->status);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function statusLabels(): array
+    {
+        return [
             self::STATUS_PENDING => 'Pendente',
             self::STATUS_LABEL_GENERATED => 'Etiqueta gerada',
             self::STATUS_POSTED => 'Postado',
             self::STATUS_DELIVERED => 'Entregue',
             self::STATUS_CANCELLED => 'Cancelado',
-            default => ucfirst($this->status),
-        };
+        ];
     }
 
     public static function statuses(): array

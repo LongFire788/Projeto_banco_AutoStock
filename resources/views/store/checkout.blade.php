@@ -44,7 +44,39 @@
         </div>
     @else
         <form method="POST" action="{{ route('checkout.store') }}"
-              x-data="{ shipping: @js($defaultPrices) }"
+              x-data="{
+                  shipping: @js($defaultPrices),
+                  cepLoading: false,
+                  cepMessage: '',
+                  async lookupCep() {
+                      const cep = this.$refs.shippingZip.value.replace(/\D/g, '');
+                      if (cep.length !== 8) return;
+
+                      this.cepLoading = true;
+                      this.cepMessage = '';
+
+                      try {
+                          const url = @js(url('/cep')) + '/' + cep;
+                          const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                          if (!response.ok) throw new Error('CEP indisponível');
+
+                          const data = await response.json();
+                          this.$refs.shippingZip.value = data.zip_code;
+                          this.$refs.street.value = data.street;
+                          this.$refs.neighborhood.value = data.neighborhood;
+                          this.$refs.city.value = data.city;
+                          this.$refs.state.value = data.state;
+                          if (data.complement && !this.$refs.complement.value) {
+                              this.$refs.complement.value = data.complement;
+                          }
+                      } catch (error) {
+                          this.cepMessage = 'Não foi possível buscar o endereço. Preencha manualmente.';
+                      } finally {
+                          this.cepLoading = false;
+                      }
+                  }
+              }"
+              x-init="if ($refs.street.value === '' && $refs.shippingZip.value.replace(/\D/g, '').length === 8) lookupCep()"
               class="grid gap-6 lg:grid-cols-3">
             @csrf
 
@@ -63,9 +95,12 @@
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none">
                         </div>
                         <div>
-                            <label class="mb-1 block text-sm font-medium text-slate-700">CPF / CNPJ</label>
-                            <input name="customer_document" value="{{ old('customer_document') }}"
-                                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                            <label class="mb-1 block text-sm font-medium text-slate-700">CPF / CNPJ *</label>
+                            <input name="customer_document" value="{{ old('customer_document') }}" required
+                                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm @error('customer_document') border-rose-500 @enderror">
+                            @error('customer_document')
+                                <p class="mt-1 text-xs font-medium text-rose-600">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">Telefone</label>
@@ -74,37 +109,46 @@
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">CEP *</label>
-                            <input name="shipping_zip_code" value="{{ old('shipping_zip_code', $zipCode) }}" required maxlength="9"
-                                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                            <div class="flex gap-2">
+                                <input name="shipping_zip_code" x-ref="shippingZip" x-on:blur="lookupCep()"
+                                       value="{{ old('shipping_zip_code', $zipCode) }}" required maxlength="9" inputmode="numeric"
+                                       class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                                <button type="button" x-on:click="lookupCep()"
+                                        class="shrink-0 rounded-lg border border-slate-300 px-3 text-xs font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700">
+                                    Buscar
+                                </button>
+                            </div>
+                            <p x-show="cepLoading" class="mt-1 text-xs text-slate-500">Buscando endereço...</p>
+                            <p x-show="cepMessage" x-text="cepMessage" class="mt-1 text-xs text-rose-600"></p>
                         </div>
                         <div class="sm:col-span-2">
                             <label class="mb-1 block text-sm font-medium text-slate-700">Rua *</label>
-                            <input name="shipping_street" value="{{ old('shipping_street') }}" required
+                            <input name="shipping_street" x-ref="street" value="{{ old('shipping_street') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">Número *</label>
-                            <input name="shipping_number" value="{{ old('shipping_number') }}" required
+                            <input name="shipping_number" x-ref="number" value="{{ old('shipping_number') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">Complemento</label>
-                            <input name="shipping_complement" value="{{ old('shipping_complement') }}"
+                            <input name="shipping_complement" x-ref="complement" value="{{ old('shipping_complement') }}"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">Bairro *</label>
-                            <input name="shipping_neighborhood" value="{{ old('shipping_neighborhood') }}" required
+                            <input name="shipping_neighborhood" x-ref="neighborhood" value="{{ old('shipping_neighborhood') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">Cidade *</label>
-                            <input name="shipping_city" value="{{ old('shipping_city') }}" required
+                            <input name="shipping_city" x-ref="city" value="{{ old('shipping_city') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-medium text-slate-700">UF *</label>
-                            <input name="shipping_state" value="{{ old('shipping_state') }}" required maxlength="2"
+                            <input name="shipping_state" x-ref="state" value="{{ old('shipping_state') }}" required maxlength="2"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm uppercase">
                         </div>
                         <div class="sm:col-span-2">

@@ -19,7 +19,7 @@ class PixCheckoutTest extends TestCase
         return [
             'customer_name' => 'Ana Pereira',
             'customer_email' => 'ana@example.test',
-            'customer_document' => '12345678901',
+            'customer_document' => '12345678909',
             'customer_phone' => '(11) 99999-0000',
             'shipping_zip_code' => '20040020',
             'shipping_street' => 'Rua B',
@@ -141,7 +141,7 @@ class PixCheckoutTest extends TestCase
         $this->post(route('checkout.store'), $this->checkoutPayload($seller));
 
         $order = Order::firstOrFail();
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
 
         $this->actingAs($user)
             ->get(route('admin.orders.show', $order))
